@@ -111,6 +111,14 @@ async def search_content(state: AgentState) -> dict:
                             continue
                             
                         if os.path.exists(os.path.join(settings.BASE_DIR, cached["url"].lstrip("/api/"))):
+                            # Filtro extra mesmo para o que já está no cache!
+                            description = cached.get("description", "").lower()
+                            is_suspicious_cached = any(x in description for x in ["questão", "enunciado", "escreva abaixo", "alternativa", "folha de atividade", "exercício"])
+                            
+                            if is_suspicious_cached:
+                                logger.info(f"Removendo imagem suspeita que estava no cache: {img_url}")
+                                continue
+
                             images_to_use.append(cached)
                             if len(images_to_use) >= 3: break
                             continue
