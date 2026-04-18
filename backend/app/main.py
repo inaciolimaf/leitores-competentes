@@ -1,8 +1,9 @@
 import logging
-
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from app.core.config import settings
 from app.models.descriptors import DESCRIPTORS
@@ -32,47 +33,49 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Ensure directories exist
-import os
-os.makedirs(settings.IMAGES_DIR, exist_ok=True)
-os.makedirs(settings.EXPORTS_DIR, exist_ok=True)
-
-# Mount static directory for images and exports
-app.mount("/api/static", StaticFiles(directory=settings.STATIC_DIR), name="static")
-
-# Include modular routers
-app.include_router(reading_router, prefix="/api", tags=["reading"])
-app.include_router(export_router, prefix="/api")
-
-# Serve Frontend (if built)
-FRONTEND_DIR = os.path.join(settings.BASE_DIR, "static", "frontend")
-logger.info(f"Procurando frontend em: {FRONTEND_DIR}")
-
-if os.path.exists(FRONTEND_DIR):
-    logger.info("Frontend encontrado! Montando rotas estáticas.")
-    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
-else:
-    logger.warning(f"Frontend NÃO encontrado em {FRONTEND_DIR}. O site principal pode não carregar.")
-    
-    # Catch-all for React Routing
-    from fastapi.responses import FileResponse
-    @app.get("/{full_path:path}")
-    async def serve_frontend(full_path: str):
-        if full_path.startswith("api/"):
-            return None # Let FastAPI handle 404 for missing API routes
-        return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
-
+# --- 1. API ROUTES ---
 
 @app.get("/api/health")
 async def health_check():
-    """Health check endpoint."""
     return {"status": "ok"}
-
 
 @app.get("/api/descriptors")
 async def get_descriptors():
-    """Return the available descriptors and their configurations."""
     descriptors_list = [
         {"code": code, **data} for code, data in DESCRIPTORS.items()
     ]
     return {"descriptors": descriptors_list}
+
+app.include_router(reading_router, prefix="/api", tags=["reading"])
+app.include_router(export_router, prefix="/api")
+
+# --- 2. STATIC FILES (API) ---
+
+os.makedirs(settings.IMAGES_DIR, exist_ok=True)
+os.makedirs(settings.EXPORTS_DIR, exist_ok=True)
+app.mount("/api/static", StaticFiles(directory=settings.STATIC_DIR), name="static")
+
+# --- 3. FRONTEND (SERVE AT THE END) ---
+
+FRONTEND_DIR = os.path.join(settings.BASE_DIR, "static", "frontend")
+logger.info(f"Procurando frontend em: {FRONTEND_DIR}")
+
+if os.path.exists(FRONTEND_DIR):
+    logger.info("Frontend encontrado! Ativando rotas do site.")
+    
+    # Rota específica para o index e arquivos estáticos do assets
+    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="assets")
+    
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        # Se for uma rota de API que não foi capturada acima, retorna 404
+        if full_path.startswith("api/"):
+            return {"detail": "Not Found"}, 404
+        
+        # Para qualquer outra rota, serve o index.html (suporte ao React Router)
+        file_path = os.path.join(FRONTEND_DIR, full_path)
+        if os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
+else:
+    logger.warning("Frontend NÃO encontrado. O site principal não será carregado.")
