@@ -118,8 +118,15 @@ async def search_content(state: AgentState) -> dict:
                     local_url = await download_image_locally(img_url)
                     if local_url:
                         desc_vis = await describe_image_vision(local_url)
-                        if any(x in desc_vis for x in ["REJEITADA_ATIVIDADE", "REJEITADA_IDIOMA", "REJEITADA_QUALIDADE", "[ERRO_VISION]"]):
-                            logger.info(f"Imagem ignorada por filtro ou falha no provedor: {img_url}")
+                        
+                        # Filtro 1: Palavras-chave de rejeição da Visão
+                        is_rejected = any(x in desc_vis for x in ["REJEITADA_ATIVIDADE", "REJEITADA_IDIOMA", "REJEITADA_QUALIDADE", "[ERRO_VISION]"])
+                        
+                        # Filtro 2: Fallback caso a Visão descreva mas deixe vazar que é exercício
+                        is_suspicious = any(x in desc_vis.lower() for x in ["questão", "enunciado", "escreva abaixo", "alternativa", "folha de atividade", "exercício"])
+
+                        if is_rejected or is_suspicious:
+                            logger.info(f"Imagem ignorada por filtro (Visão: {is_rejected}, Suspeita: {is_suspicious}): {img_url}")
                             # Salva a rejeicao no cache para não perder tempo com essa URL no futuro
                             image_cache[img_url] = {"url": local_url, "description": "REJECTED"}
                             save_image_cache(image_cache)

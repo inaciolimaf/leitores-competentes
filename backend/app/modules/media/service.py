@@ -18,8 +18,8 @@ def _get_llm() -> ChatOpenAI:
         model=settings.OPENROUTER_MODEL,
         openai_api_base="https://openrouter.ai/api/v1",
         openai_api_key=settings.OPENROUTER_API_KEY,
-        temperature=0.7,
-        max_tokens=16000,
+        temperature=0.1, # Menor temperatura para maior rigor e consistência
+        max_tokens=2000,
     )
 
 async def download_image_locally(url: str) -> str | None:
@@ -66,7 +66,6 @@ async def download_image_locally(url: str) -> str | None:
 async def describe_image_vision(local_path: str) -> str:
     """Use AI Vision to describe the content of a downloaded image."""
     try:
-        # Full path to the file
         full_path = os.path.join(settings.BASE_DIR, local_path.lstrip("/api/"))
         
         if not os.path.exists(full_path):
@@ -77,7 +76,6 @@ async def describe_image_vision(local_path: str) -> str:
 
         llm = _get_llm()
         
-        # Determine mime type
         mime_type = "image/jpeg"
         if full_path.endswith(".png"): mime_type = "image/png"
         elif full_path.endswith(".gif"): mime_type = "image/gif"
@@ -88,23 +86,20 @@ async def describe_image_vision(local_path: str) -> str:
                 {
                     "type": "text", 
                     "text": (
-                        "Você é um filtro rigoroso de qualidade para materiais didáticos. "
-                        "Analise a imagem e verifique se ela deve ser REJEITADA por um destes motivos:\n\n"
-                        "1) É uma FOLHA DE ATIVIDADE, PROVA ou DEVER DE CASA: "
-                        "Rejeite se houver cabeçalhos (Nome, Data, Turma, Escola), "
-                        "títulos de atividades (ex: 'Interpretação de Texto', 'Exercícios'), "
-                        "ou QUESTÕES (1, 2, 3...) escritas fora da tirinha. "
-                        "Se a imagem parecer uma página de livro ou xerox com exercícios, REJEITE.\n"
-                        "2) IDIOMA ESTRANGEIRO: Rejeite se o texto nos balões não for Português do Brasil.\n"
-                        "3) MÁ QUALIDADE: Imagem excessivamente borrada, cortada ou ilegível.\n\n"
-                        "RESPOSTAS OBRIGATÓRIAS:\n"
-                        "- Se for o caso 1: Responda apenas 'REJEITADA_ATIVIDADE'.\n"
-                        "- Se for o caso 2: Responda apenas 'REJEITADA_IDIOMA'.\n"
-                        "- Se for o caso 3 ou qualquer outro problema: Responda apenas 'REJEITADA_QUALIDADE'.\n\n"
-                        "SE A IMAGEM FOR PURA (Apenas a tirinha/HQ/imagem sem nada em volta):\n"
-                        "Descreva detalhadamente a cena, as expressões dos personagens e transcreva "
-                        "TODO o texto dos balões fielmente. O objetivo é que um professor use essa descrição "
-                        "para criar perguntas novas do zero."
+                        "VOCÊ É UM CENSOR RIGOROSO DE CONTEÚDO PARA PROFESSORES. SUA MISSÃO É BANIR ATIVIDADES PRONTAS.\n\n"
+                        "ANALISE A IMAGEM EM BUSCA DE SINAIS DE 'FOLHA DE EXERCÍCIOS':\n"
+                        "1. EXISTEM QUESTÕES NUMERADAS? (Ex: 1-, 2., a), b)...) -> REJEITE IMEDIATAMENTE.\n"
+                        "2. EXISTEM LINHAS DE RESPOSTA? (Traços horizontais para escrever embaixo) -> REJEITE IMEDIATAMENTE.\n"
+                        "3. EXISTE UM CABEÇALHO? (Nome, Data, Escola, Professora, 'Leia o texto') -> REJEITE IMEDIATAMENTE.\n"
+                        "4. É UM SCAN OU XEROX DE LIVRO DIDÁTICO? (Fundo amarelado, bordas de página) -> REJEITE IMEDIATAMENTE.\n"
+                        "5. A TIRINHA É PEQUENA EM COMPARAÇÃO À PÁGINA CHEIA DE TEXTO? -> REJEITE IMEDIATAMENTE.\n\n"
+                        "CRITÉRIO DE ACEITAÇÃO:\n"
+                        "- APENAS a tirinha pura, charge ou imagem limpa.\n"
+                        "- O texto deve estar APENAS dentro dos balões de fala ou ser onomatopeia.\n\n"
+                        "RESPOSTAS PERMITIDAS:\n"
+                        "- Se encontrar QUALQUER sinal de exercício/vaga/cabeçalho: responda apenas 'REJEITADA_ATIVIDADE'\n"
+                        "- Se a imagem for de má qualidade ou idioma estrangeiro: responda apenas 'REJEITADA_QUALIDADE'\n"
+                        "- Se for uma tirinha PURA e LIMPA: Descreva a cena, personagens e transcreva fielmente os diálogos."
                     )
                 },
                 {
@@ -114,9 +109,14 @@ async def describe_image_vision(local_path: str) -> str:
             ]
         )
         
-        logger.info(f"Solicitando descrição visual para: {full_path}")
+        logger.info(f"Solicitando descrição visual rigorosa: {full_path}")
         response = await llm.ainvoke([message])
-        description = response.content
+        description = response.content.strip()
+        
+        # Log preventivo para debugar aceites indevidos
+        if "REJEITADA" not in description:
+            logger.info(f"Imagem ACEITA pela Visão: {full_path}")
+            
         return description
 
     except Exception as e:
