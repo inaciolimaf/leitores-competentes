@@ -1,34 +1,33 @@
-# fly.toml app configuration file for leitores-competentes
-# See https://fly.io/docs/reference/configuration/ for information
+# fly.toml app configuration file generated for leitores-competentes on 2026-04-18T20:01:34-03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-app = "leitores-competentes"
-primary_region = "gru" # Sao Paulo is usually best for Brazil
+app = 'leitores-competentes'
+primary_region = 'gru'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
+
+[env]
+  DATA_DIR = '/data'
+  OPENROUTER_MODEL = 'google/gemini-2.5-flash-lite'
+  USE_TAVILY_CACHE = 'true'
+
+[[mounts]]
+  source = 'lc_data'
+  destination = '/data'
+  initial_size = '1gb'
 
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = true    # Desliga a máquina se não houver uso
-  auto_start_machines = true   # Liga a máquina automaticamente ao receber requisição
-  min_machines_running = 0     # Permite escala para zero (economia total)
-  processes = ["app"]
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
 
 [[vm]]
-  cpu_kind = "shared"
+  cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 512              # Tamanho mínimo recomendado para FastAPI + React
-
-[[mounts]
-  source = "lc_data"           # Nome do volume a ser criado no Fly (fly volumes create lc_data)
-  destination = "/data"        # Onde o volume será montado
-  initial_size = "1gb"         # Tamanho mínimo do volume (gratuito)
-
-[env]
-  DATA_DIR = "/data"
-  USE_TAVILY_CACHE = "true"
-  OPENROUTER_MODEL = "google/gemini-2.0-flash-lite-preview-02-05"
-
-# As chaves de API devem ser configuradas via:
-# fly secrets set OPENROUTER_API_KEY=... TAVILY_API_KEY=...
+  memory_mb = 512
