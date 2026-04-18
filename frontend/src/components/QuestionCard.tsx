@@ -91,7 +91,7 @@ export function QuestionCard({
             <img
               src={question.support_image_url}
               alt="Imagem de suporte da questão"
-              className="max-w-full lg:max-w-2xl max-h-[500px] rounded-lg object-contain shadow-sm"
+              className="max-w-full lg:max-w-3xl max-h-[700px] rounded-lg object-contain shadow-sm lg:shadow-md"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = "none";
               }}

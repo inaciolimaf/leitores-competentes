@@ -93,16 +93,15 @@ async def describe_image_vision(local_path: str) -> str:
                         "3. EXISTE UM CABEÇALHO? (Nome, Data, Escola, Professora, 'Leia o texto') -> REJEITE IMEDIATAMENTE.\n"
                         "4. É UM SCAN OU XEROX DE LIVRO DIDÁTICO? (Fundo amarelado, bordas de página) -> REJEITE IMEDIATAMENTE.\n"
                         "5. A TIRINHA É PEQUENA EM COMPARAÇÃO À PÁGINA CHEIA DE TEXTO? -> REJEITE IMEDIATAMENTE.\n"
-                        "6. NÃO HÁ TEXTO NOS BALÕES? Se for uma tirinha 'muda' (apenas desenhos, sem diálogos ou legendas) -> REJEITE IMEDIATAMENTE.\n\n"
+                        "6. TEXTO INSUFICIENTE? Rejeite se a tirinha for 'muda' ou se o texto for irrelevante (Apenas saudações como 'Oi', 'Olá' ou apenas 'Fim'). É OBRIGATÓRIO que os balões contenham frases ou diálogos que permitam uma interpretação textual real.\n\n"
                         "CRITÉRIO DE ACEITAÇÃO:\n"
                         "- APENAS a tirinha pura, charge ou imagem limpa.\n"
-                        "- O texto deve estar APENAS dentro dos balões de fala ou ser onomatopeia.\n"
-                        "- É OBRIGATÓRIO que a imagem tenha algum texto escrito para interpretação.\n\n"
+                        "- O texto deve ser RICO o suficiente para gerar uma questão de interpretação (mínimo de uma frase com sentido completo ou diálogo informativo).\n\n"
                         "RESPOSTAS PERMITIDAS:\n"
-                        "- Se encontrar QUALQUER sinal de exercício/vaga/cabeçalho: responda apenas 'REJEITADA_ATIVIDADE'\n"
-                        "- Se não houver texto/diálogos na imagem: responda apenas 'REJEITADA_SEM_TEXTO'\n"
-                        "- Se a imagem for de má qualidade ou idioma estrangeiro: responda apenas 'REJEITADA_QUALIDADE'\n"
-                        "- Se for uma tirinha PURA, LIMPA e COM TEXTO: Descreva a cena, personagens e transcreva fielmente os diálogos."
+                        "- Se for atividade/exercício: 'REJEITADA_ATIVIDADE'\n"
+                        "- Se não houver texto suficiente/relevante: 'REJEITADA_SEM_TEXTO'\n"
+                        "- Se a imagem for ruim: 'REJEITADA_QUALIDADE'\n"
+                        "- Se for OK: Descreva a cena, personagens e transcreva TODO o texto dos balões."
                     )
                 },
                 {

@@ -113,7 +113,6 @@ def generate_pdf(title: str, questions: list[Question]) -> str:
             
             if q.text and q.text.strip():
                 process_text_for_pdf(q.text, story)
-                story.append(Spacer(1, 4))
                 
             if q.support_image_url:
                 img_path = q.support_image_url
@@ -124,10 +123,26 @@ def generate_pdf(title: str, questions: list[Question]) -> str:
                 if os.path.exists(full_img_path):
                     try:
                         img = Image(full_img_path)
-                        img._restrictSize(450, 300)
+                        # Limites maiores para a imagem
+                        available_width = doc.width
+                        available_height = 450 # Aumentado de 350 para 450
+                        
+                        img_width, img_height = img.drawWidth, img.drawHeight
+                        aspect = img_height / float(img_width)
+                        
+                        if img_width > available_width:
+                            img_width = available_width
+                            img_height = img_width * aspect
+                            
+                        if img_height > available_height:
+                            img_height = available_height
+                            img_width = img_height / aspect
+                            
+                        img.drawWidth = img_width
+                        img.drawHeight = img_height
                         img.hAlign = 'CENTER'
                         story.append(img)
-                        story.append(Spacer(1, 5))
+                        story.append(Spacer(1, 15))
                     except Exception as e:
                         logger.error(f"Error loading image into PDF: {e}")
             

@@ -106,7 +106,7 @@ export function SimuladoSelect({ questions, onGenerateSuccess, onCancel }: Simul
                       <img 
                         src={q.support_image_url} 
                         alt="Imagem da questão" 
-                        className="max-h-64 object-contain rounded-md"
+                        className="max-h-[600px] object-contain rounded-md"
                         onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                       />
                     </div>
