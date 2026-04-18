@@ -46,8 +46,13 @@ app.include_router(export_router, prefix="/api")
 
 # Serve Frontend (if built)
 FRONTEND_DIR = os.path.join(settings.BASE_DIR, "static", "frontend")
+logger.info(f"Procurando frontend em: {FRONTEND_DIR}")
+
 if os.path.exists(FRONTEND_DIR):
+    logger.info("Frontend encontrado! Montando rotas estáticas.")
     app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+else:
+    logger.warning(f"Frontend NÃO encontrado em {FRONTEND_DIR}. O site principal pode não carregar.")
     
     # Catch-all for React Routing
     from fastapi.responses import FileResponse
