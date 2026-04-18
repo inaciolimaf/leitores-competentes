@@ -7,8 +7,8 @@ class Settings(BaseSettings):
     TAVILY_API_KEY: str = os.getenv("TAVILY_API_KEY", "")
     USE_TAVILY_CACHE: bool = os.getenv("USE_TAVILY_CACHE", "true").lower() == "true"
     
-    # Path settings
-    BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # Path settings (Subindo 3 níveis para chegar na raiz /app a partir de app/core/config.py)
+    BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     DATA_DIR: str = os.getenv("DATA_DIR", BASE_DIR)
     
     STATIC_DIR: str = os.path.join(DATA_DIR, "static")
