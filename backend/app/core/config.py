@@ -9,11 +9,14 @@ class Settings(BaseSettings):
     
     # Path settings
     BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    STATIC_DIR: str = os.path.join(BASE_DIR, "static")
+    DATA_DIR: str = os.getenv("DATA_DIR", BASE_DIR)
+    
+    STATIC_DIR: str = os.path.join(DATA_DIR, "static")
     IMAGES_DIR: str = os.path.join(STATIC_DIR, "images")
+    EXPORTS_DIR: str = os.path.join(STATIC_DIR, "exports")
     
     # Cache files
-    TAVILY_CACHE_FILE: str = "tavily_cache.json"
-    IMAGE_CACHE_FILE: str = "image_cache.json"
+    TAVILY_CACHE_FILE: str = os.path.join(DATA_DIR, "tavily_cache.json")
+    IMAGE_CACHE_FILE: str = os.path.join(DATA_DIR, "image_cache.json")
 
 settings = Settings()

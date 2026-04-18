@@ -32,16 +32,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Ensure images directory exists
+# Ensure directories exist
 import os
 os.makedirs(settings.IMAGES_DIR, exist_ok=True)
+os.makedirs(settings.EXPORTS_DIR, exist_ok=True)
 
-# Mount static directory for images
+# Mount static directory for images and exports
 app.mount("/api/static", StaticFiles(directory=settings.STATIC_DIR), name="static")
 
 # Include modular routers
 app.include_router(reading_router, prefix="/api", tags=["reading"])
 app.include_router(export_router, prefix="/api")
+
+# Serve Frontend (if built)
+FRONTEND_DIR = os.path.join(settings.BASE_DIR, "static", "frontend")
+if os.path.exists(FRONTEND_DIR):
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+    
+    # Catch-all for React Routing
+    from fastapi.responses import FileResponse
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        if full_path.startswith("api/"):
+            return None # Let FastAPI handle 404 for missing API routes
+        return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
 
 @app.get("/api/health")
