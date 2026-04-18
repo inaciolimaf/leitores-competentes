@@ -71,17 +71,13 @@ async def search_content(state: AgentState) -> dict:
         desc = DESCRIPTORS.get(code)
         if not desc: continue
         
-        # Otimização 1: Não buscar no Tavily para descritores apenas de texto! O LLM vai inventar.
         if not desc.get("needs_image"):
             all_results.append(f"### Mande o Gênio (LLM) inventar textos originais para o descritor {code}!")
             continue
 
-        # Otimização 3: Tentar as queries do descritor até encontrar imagens válidas
         if desc["search_queries"]:
-            # Embaralha para não pegar sempre as mesmas
             queries_to_try = list(desc["search_queries"])
             random.shuffle(queries_to_try)
-            
             images_to_use = []
             
             for query in queries_to_try:
@@ -89,9 +85,8 @@ async def search_content(state: AgentState) -> dict:
                 searched_queries.add(query)
 
                 query_hash = hashlib.md5(query.encode("utf-8")).hexdigest()
-                
-                # --- Tavily Search with Logic to Force Refresh ---
                 results_dict = None
+
                 for attempt in range(2):
                     if settings.USE_TAVILY_CACHE and attempt == 0 and query_hash in tavily_cache:
                         results_dict = tavily_cache[query_hash]
@@ -106,40 +101,29 @@ async def search_content(state: AgentState) -> dict:
                     
                     if not results_dict: break
 
-                    # --- Image Validation (Downloads & Vision) ---
                     unverified_images = results_dict.get("images", [])
                     for img_url in unverified_images[:10]:
                         if img_url in image_cache:
                             cached = image_cache[img_url]
-                            if cached.get("description") == "REJECTED":
-                                continue
-                                
+                            if cached.get("description") == "REJECTED": continue
+                            
                             if os.path.exists(os.path.join(settings.BASE_DIR, cached["url"].lstrip("/api/"))):
-                                # Filtro extra mesmo para o que já está no cache!
                                 description = cached.get("description", "").lower()
                                 is_suspicious_cached = any(x in description for x in ["questão", "enunciado", "escreva abaixo", "alternativa", "folha de atividade", "exercício"])
-                                
-                                if is_suspicious_cached:
-                                    logger.info(f"Removendo imagem suspeita que estava no cache: {img_url}")
+                                if not is_suspicious_cached:
+                                    images_to_use.append(cached)
+                                    if len(images_to_use) >= 3: break
                                     continue
-
-                                images_to_use.append(cached)
-                                if len(images_to_use) >= 3: break
-                                continue
 
                         local_url = await download_image_locally(img_url)
                         if local_url:
                             desc_vis = await describe_image_vision(local_url)
                             
-                            # Filtro 1: Palavras-chave de rejeição da Visão
-                            is_rejected = any(x in desc_vis for x in ["REJEITADA_ATIVIDADE", "REJEITADA_IDIOMA", "REJEITADA_QUALIDADE", "[ERRO_VISION]"])
-                            
-                            # Filtro 2: Fallback caso a Visão descreva mas deixe vazar que é exercício
+                            is_rejected = any(x in desc_vis for x in ["REJEITADA_ATIVIDADE", "REJEITADA_IDIOMA", "REJEITADA_QUALIDADE", "REJEITADA_SEM_TEXTO", "[ERRO_VISION]"])
                             is_suspicious = any(x in desc_vis.lower() for x in ["questão", "enunciado", "escreva abaixo", "alternativa", "folha de atividade", "exercício"])
 
                             if is_rejected or is_suspicious:
                                 logger.info(f"Imagem ignorada por filtro (Visão: {is_rejected}, Suspeita: {is_suspicious}): {img_url}")
-                                # Salva a rejeicao no cache para não perder tempo com essa URL no futuro
                                 image_cache[img_url] = {"url": local_url, "description": "REJECTED"}
                                 save_image_cache(image_cache)
                                 try:
@@ -153,31 +137,23 @@ async def search_content(state: AgentState) -> dict:
                             save_image_cache(image_cache)
                         if len(images_to_use) >= 3: break
                     
-                    # Se encontramos imagens, podemos parar de tentar novas queries para este descritor
-                    if images_to_use:
-                        break
-                        
-                    # Check for stale cache
-                    needs_img = desc.get("needs_image", False)
-                    if (unverified_images and not images_to_use) or (needs_img and not unverified_images):
-                        if attempt == 0: continue # Retry with fresh search
+                    if images_to_use: break
+                    if (unverified_images and not images_to_use) or (desc.get("needs_image") and not unverified_images):
+                        if attempt == 0: continue
                     break
 
                 if images_to_use:
-                    # Otimização 2: "Pool" no Cache. Embaralhar e sortear 2 imagens, e pegar alguns textos aleatórios.
                     results = results_dict.get("results", [])
                     if len(results) > 2: results = random.sample(results, 2)
-                    content_parts = [f"### Fonte: {r['url']}\n{r['content']}" for r in results]
+                    content_parts = [f"### [FONTE PROTEGIDA]\n{r['content']}" for r in results]
                     
-                    # random sort the images to use to add variety
                     if len(images_to_use) > 1: images_to_use = random.sample(images_to_use, min(2, len(images_to_use)))
-                    content_parts.append("\n### Imagens Relacionadas:")
+                    content_parts.append("\n### Imagens Disponíveis (USE ESTAS URLs):")
                     for img in images_to_use:
-                        content_parts.append(f"- URL Local: {img['url']}\n  DESCRIÇÃO INTERNA (NÃO MOSTRAR AO ALUNO): {img['description']}")
+                        content_parts.append(f"- URL Local: {img['url']}\n  DESCRIÇÃO DA TIRINHA: {img['description']}")
                     all_results.append(f"### Busca para {code} (Query: {query})\n" + "\n".join(content_parts))
-                    break # Concluiu o descritor com sucesso!
+                    break 
 
-            # Se depois de tentar TODAS as queries ainda não houver imagens para um descritor que EXIGE imagem:
             if desc.get("needs_image") and not images_to_use:
                 logger.warning(f"AVISO: Nenhuma imagem válida encontrada para o descritor {code} após todas as queries.")
 
@@ -215,7 +191,6 @@ def validate_output(state: AgentState) -> dict:
     
     content = last_msg.content
     try:
-        # Simple extraction logic
         json_str = content
         if "```json" in content:
             json_str = content.split("```json")[1].split("```")[0]
