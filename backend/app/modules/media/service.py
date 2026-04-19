@@ -3,6 +3,7 @@ import logging
 import os
 import uuid
 from urllib.parse import urlparse
+from PIL import Image
 
 import httpx
 from langchain_core.messages import HumanMessage
@@ -55,6 +56,16 @@ async def download_image_locally(url: str) -> str | None:
             
             with open(filepath, "wb") as f:
                 f.write(res.content)
+            
+            # Validação de integridade com PIL
+            try:
+                with Image.open(filepath) as img:
+                    img.verify()
+            except Exception as e:
+                logger.error(f"Imagem corrompida ou inválida: {url}. Erro: {e}")
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+                return None
                 
             logger.info(f"Imagem baixada: {url} -> {filename}")
             return f"/api/static/images/{filename}"
