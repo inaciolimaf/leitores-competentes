@@ -106,15 +106,20 @@ async def search_content(state: AgentState) -> dict:
                     for img_url in unverified_images[:10]:
                         if img_url in image_cache:
                             cached = image_cache[img_url]
-                            if cached.get("description") == "REJECTED": continue
+                            description = cached.get("description", "").lower()
+                            
+                            # Filtro de Invalidação: Se o cache diz que é REJECTED ou se parece ser atividade (antigo aceite)
+                            is_rejected = description == "rejected"
+                            is_suspicious_cached = any(x in description for x in ["questão", "enunciado", "escreva abaixo", "alternativa", "folha de atividade", "exercício", "responda", "questões"])
+                            
+                            if is_rejected or is_suspicious_cached:
+                                logger.info(f"Pulando imagem cacheada como inválida/suspeita: {img_url}")
+                                continue
                             
                             if os.path.exists(os.path.join(settings.BASE_DIR, cached["url"].lstrip("/api/"))):
-                                description = cached.get("description", "").lower()
-                                is_suspicious_cached = any(x in description for x in ["questão", "enunciado", "escreva abaixo", "alternativa", "folha de atividade", "exercício"])
-                                if not is_suspicious_cached:
-                                    images_to_use.append(cached)
-                                    if len(images_to_use) >= 3: break
-                                    continue
+                                images_to_use.append(cached)
+                                if len(images_to_use) >= 3: break
+                                continue
 
                         local_url = await download_image_locally(img_url)
                         if local_url:

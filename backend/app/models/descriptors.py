@@ -88,15 +88,13 @@ DESCRIPTORS = {
         ],
         "search_queries": [
             "tirinha para crianças 3 ano ensino fundamental imagem -prova -atividade -exercício -folha",
-            "história em quadrinhos infantil para interpretação -escola -atividade -dever",
-            "tirinha turma da mônica pura -prova -matéria -exercício",
-            "tirinha mafalda original leitura -atividade -folha",
-            "tirinha menino maluquinho desenho infantil -folha -prova -dever",
-            "tirinha calvin e haroldo sem atividade -exercício",
-            "charge infantil meio ambiente -escola -atividade -folha",
             "quadrinhos turma da monica 3 ano -atividade -exercício",
             "tirinha hagar o horrível puro -atividade",
-            "tirinha snoop leitura infantil -exercício"
+            "tirinha snoop leitura infantil -exercício",
+            "tirinha mafalda português interpretação -atividade -escola",
+            "calvin e haroldo tirinhas português -folha -dever",
+            "menino maluquinho tirinha leitura -exercicio -prova",
+            "tirinhas curtas armandinho leitura -atividade"
         ],
         "needs_image": True,
         "notes": (
