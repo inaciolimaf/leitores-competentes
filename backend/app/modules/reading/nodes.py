@@ -55,6 +55,7 @@ def plan_questions(state: AgentState) -> dict:
     return {
         "search_plan": search_plan,
         "descriptors_detail": descriptors_detail,
+        "retry_count": 0,
         "messages": [SystemMessage(content=SYSTEM_PROMPT.format(difficulty=difficulty))],
     }
 
@@ -198,6 +199,16 @@ def validate_output(state: AgentState) -> dict:
             json_str = content.split("```")[1].split("```")[0]
         
         data = json.loads(json_str)
+        
+        # --- FILTRO ANTI-ALUCINAÇÃO DE URL ---
+        if "questions" in data:
+            for q in data["questions"]:
+                url = q.get("support_image_url")
+                # Se for uma URL externa (hallucinated), limpamos
+                if url and not url.startswith("/api/static/images/"):
+                    logger.warning(f"Limpando URL alucinada pela IA: {url}")
+                    q["support_image_url"] = None
+        
         response = GenerateResponse(**data)
         return {"output": response.model_dump()}
     except Exception as e:

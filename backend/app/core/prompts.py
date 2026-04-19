@@ -101,8 +101,11 @@ INSTRUÇÕES:
    - NÃO gere roteiros de vídeos, transcrições de podcasts ou descrições de infográficos complexos.
    - LIMITE-SE a gêneros que funcionam em papel: Contos, Poemas, Notícias, Avisos, Placas, Bilhetes, Piadas, Receitas e Cartas.
 8. PROIBIDO USAR PLACEHOLDERS: NUNCA use colchetes como "[Nome]", "[Data]". Invente dados completos.
-9. Varie a letra da resposta correta.
-10. A pergunta deve ser formulada com base no conteúdo, garantindo a avaliação do descritor.
+10. **REGRA DE OURO PARA IMAGENS (IMPERATIVO):**
+   - Use APENAS as URLs fornecidas na seção "Imagens Disponíveis" (que começam com /api/static/images/).
+   - **PROIBIDO:** NUNCA invente URLs de sites externos (Pinterest, PNGMart, etc.) ou caminhos que não foram entregues nesta conversa.
+   - **SE NÃO HOUVER IMAGEM LOCAL VÁLIDA:** O campo `support_image_url` DEVE SER `null`.
+   - QUALQUER URL QUE NÃO COMECE COM /api/static/images/ SERÁ ELIMINADA PELO SISTEMA.
 
 Retorne APENAS o JSON válido, sem texto adicional.
 """

@@ -19,3 +19,4 @@ class AgentState(TypedDict):
     # Final output
     output: dict[str, Any] | None
     error: str | None
+    retry_count: int | None
