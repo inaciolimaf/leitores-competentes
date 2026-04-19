@@ -20,6 +20,20 @@ def build_graph() -> StateGraph:
     graph.add_edge("plan_questions", "search_content")
     graph.add_edge("search_content", "generate_questions")
     graph.add_edge("generate_questions", "validate_output")
-    graph.add_edge("validate_output", END)
+    
+    # Conditional edge for retries
+    def decide_to_retry(state: AgentState):
+        if state.get("error") == "RETRY_NEEDED":
+            return "retry"
+        return "end"
+
+    graph.add_conditional_edges(
+        "validate_output",
+        decide_to_retry,
+        {
+            "retry": "generate_questions",
+            "end": END
+        }
+    )
 
     return graph.compile()

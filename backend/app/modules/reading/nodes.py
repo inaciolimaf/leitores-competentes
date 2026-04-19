@@ -186,7 +186,7 @@ async def generate_questions(state: AgentState) -> dict:
         return {"error": f"Erro na geração: {e}"}
 
 def validate_output(state: AgentState) -> dict:
-    if state.get("error"): return {}
+    if state.get("error") and state.get("error") != "RETRY_NEEDED": return {}
     last_msg = next((m for m in reversed(state["messages"]) if isinstance(m, AIMessage)), None)
     if not last_msg: return {"error": "Sem resposta."}
     
@@ -201,15 +201,35 @@ def validate_output(state: AgentState) -> dict:
         data = json.loads(json_str)
         
         # --- FILTRO ANTI-ALUCINAÇÃO DE URL ---
+        has_issue = False
         if "questions" in data:
             for q in data["questions"]:
                 url = q.get("support_image_url")
+                code = q.get("descriptor", "")
+                needs_img = DESCRIPTORS.get(code, {}).get("needs_image", False)
+
                 # Se for uma URL externa (hallucinated), limpamos
                 if url and not url.startswith("/api/static/images/"):
                     logger.warning(f"Limpando URL alucinada pela IA: {url}")
                     q["support_image_url"] = None
+                    has_issue = True
+                
+                # Se limpamos e o descritor EXIGE imagem, marcamos para retry
+                if needs_img and not q.get("support_image_url"):
+                    has_issue = True
         
+        retry_count = state.get("retry_count", 0)
+        if has_issue and retry_count < 2:
+            logger.info(f"Hallucination or missing image detected. Retrying (Attempt {retry_count + 1})...")
+            # Adicionamos uma mensagem avisando a IA do erro para ela se corrigir
+            retry_msg = HumanMessage(content="ATENÇÃO: Algumas questões de imagem vieram sem a URL local correta. REGENERE as questões usando APENAS as URLs que começam com /api/static/images/. Se não houver imagem disponível, você deve marcar como null, mas o sistema tentará uma nova geração (isso é um erro de validação).")
+            return {
+                "error": "RETRY_NEEDED",
+                "retry_count": retry_count + 1,
+                "messages": [retry_msg]
+            }
+
         response = GenerateResponse(**data)
-        return {"output": response.model_dump()}
+        return {"output": response.model_dump(), "error": None}
     except Exception as e:
         return {"error": f"Erro na validação do JSON: {e}"}
