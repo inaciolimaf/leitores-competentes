@@ -77,7 +77,7 @@ async def download_image_locally(url: str) -> str | None:
 async def describe_image_vision(local_path: str) -> str:
     """Use AI Vision to describe the content of a downloaded image."""
     try:
-        full_path = os.path.join(settings.BASE_DIR, local_path.lstrip("/api/"))
+        full_path = os.path.join(settings.DATA_DIR, local_path.lstrip("/api/"))
         
         if not os.path.exists(full_path):
             return "Erro: Arquivo local de imagem não encontrado."

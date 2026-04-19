@@ -108,9 +108,9 @@ async def search_content(state: AgentState) -> dict:
                             cached = image_cache[img_url]
                             description = cached.get("description", "").lower()
                             
-                            # Filtro de Invalidação: Se o cache diz que é REJECTED ou se parece ser atividade (antigo aceite)
+                            # Filtro de Invalidação: Se o cache diz que é REJECTED ou se parece ser atividade (antigo aceite) ou erro
                             is_rejected = description == "rejected"
-                            is_suspicious_cached = any(x in description for x in ["questão", "enunciado", "escreva abaixo", "alternativa", "folha de atividade", "exercício", "responda", "questões"])
+                            is_suspicious_cached = any(x in description for x in ["questão", "enunciado", "escreva abaixo", "alternativa", "folha de atividade", "exercício", "responda", "questões", "erro", "error"])
                             
                             if is_rejected or is_suspicious_cached:
                                 logger.info(f"Pulando imagem cacheada como inválida/suspeita: {img_url}")
