@@ -96,7 +96,7 @@ export function QuestionForm({ onSubmit, isLoading }: QuestionFormProps) {
             <input
               type="range"
               min={1}
-              max={50}
+              max={30}
               value={quantity}
               onChange={(e) => setQuantity(Number(e.target.value))}
               className="w-full h-2 rounded-full appearance-none cursor-pointer
@@ -111,7 +111,7 @@ export function QuestionForm({ onSubmit, isLoading }: QuestionFormProps) {
             />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>1</span>
-              <span>50</span>
+              <span>30</span>
             </div>
           </div>
 
