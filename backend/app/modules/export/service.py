@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 def generate_pdf(title: str, questions: list[Question]) -> str:
     filename = f"{uuid.uuid4().hex}.pdf"
-    export_dir = os.path.join(settings.BASE_DIR, "static", "exports")
+    export_dir = settings.EXPORTS_DIR
     os.makedirs(export_dir, exist_ok=True)
     output_path = os.path.join(export_dir, filename)
     
@@ -116,9 +116,13 @@ def generate_pdf(title: str, questions: list[Question]) -> str:
                 
             if q.support_image_url:
                 img_path = q.support_image_url
-                if img_path.startswith("/api/"):
-                    img_path = img_path[5:]
-                full_img_path = os.path.join(settings.BASE_DIR, img_path)
+                if img_path.startswith("/api/static/"):
+                    # Se for um link da nossa API, resolvemos para o caminho físico no DATA_DIR
+                    rel_path = img_path.replace("/api/static/", "")
+                    full_img_path = os.path.join(settings.STATIC_DIR, rel_path)
+                else:
+                    # Fallback caso seja um caminho relativo simples
+                    full_img_path = os.path.join(settings.BASE_DIR, img_path.lstrip("/"))
                 
                 if os.path.exists(full_img_path):
                     try:
