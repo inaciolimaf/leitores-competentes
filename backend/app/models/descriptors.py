@@ -243,5 +243,156 @@ DESCRIPTORS = {
         "search_queries": [],
         "needs_image": False,
         "notes": "O LLM deve simular falas regionalistas ou informais (gírias infantis, diminutivos) e pedir que o aluno note isso."
-    }
+    },
+    # DESCRITORES DE MATEMÁTICA — 5º ANO
+    "5N1": {
+        "name": "Reconhecer e utilizar características do sistema de numeração decimal",
+        "description": (
+            "O aluno deve reconhecer valor posicional, composição/decomposição, "
+            "leitura e escrita de números no sistema de numeração decimal."
+        ),
+        "text_types": ["situação-problema curta", "enunciado matemático direto"],
+        "search_queries": [],
+        "needs_image": False,
+        "notes": (
+            "Crie enunciados envolvendo valor posicional (unidade, dezena, centena, milhar), "
+            "composição/decomposição (ex.: 3.452 = 3000 + 400 + 50 + 2) ou leitura/escrita por extenso. "
+            "Não use imagens — apenas números e texto direto."
+        ),
+    },
+    "5N3": {
+        "name": "Calcular o resultado de uma das quatro operações com números naturais, decimais ou fracionários",
+        "description": (
+            "O aluno deve efetuar adição, subtração, multiplicação ou divisão "
+            "com números naturais, decimais ou frações."
+        ),
+        "text_types": ["expressão numérica", "cálculo direto"],
+        "search_queries": [],
+        "needs_image": False,
+        "notes": (
+            "Apresente o cálculo de forma direta (ex.: '12,5 + 7,8 =' ou '3/4 + 1/4 ='). "
+            "NÃO contextualize em situação-problema; foco é no cálculo puro. "
+            "Varie entre naturais, decimais e fracionários."
+        ),
+    },
+    "5N4": {
+        "name": "Resolver problema que envolva uma das quatro operações com números naturais, decimais e fracionários",
+        "description": (
+            "O aluno deve interpretar uma situação-problema e escolher a operação "
+            "correta (adição, subtração, multiplicação ou divisão) para resolvê-la."
+        ),
+        "text_types": ["situação-problema do cotidiano", "problema escolar curto"],
+        "search_queries": [],
+        "needs_image": False,
+        "notes": (
+            "Crie um pequeno enunciado contextualizado (compras, distâncias, partilha, receitas) "
+            "e exija que o aluno identifique a operação e calcule o resultado. "
+            "Diferente do 5N3, aqui o foco é a INTERPRETAÇÃO do problema."
+        ),
+    },
+    "5G3": {
+        "name": "Identificar poliedros e corpos redondos através das suas características e propriedades",
+        "description": (
+            "O aluno deve distinguir poliedros (cubo, paralelepípedo, pirâmide, prisma) "
+            "de corpos redondos (esfera, cilindro, cone) com base em suas propriedades."
+        ),
+        "text_types": ["enunciado descritivo de sólido", "comparação entre figuras"],
+        "search_queries": [],
+        "needs_image": False,
+        "notes": (
+            "Descreva o sólido em palavras (ex.: 'tem 6 faces quadradas iguais' ou "
+            "'tem uma base circular e uma superfície curva que termina em ponta') "
+            "e peça para o aluno identificar a figura. NÃO use imagens — descreva textualmente."
+        ),
+    },
+    "5G5": {
+        "name": "Identificar números de faces, arestas e vértices de figuras geométricas tridimensionais",
+        "description": (
+            "O aluno deve contar ou reconhecer a quantidade de faces, arestas e vértices "
+            "de sólidos geométricos como cubo, paralelepípedo, pirâmide, prisma."
+        ),
+        "text_types": ["enunciado direto sobre sólido", "tabela de propriedades"],
+        "search_queries": [],
+        "needs_image": False,
+        "notes": (
+            "Pergunte diretamente sobre o número de faces, arestas ou vértices de um sólido nomeado "
+            "(ex.: 'Quantas arestas tem um cubo?'). "
+            "Pode-se descrever o sólido em palavras quando útil. NÃO use imagens."
+        ),
+    },
+    "5M2": {
+        "name": "Resolver problemas utilizando unidades de medidas padronizadas (km/m/cm/mm, kg/g/mg, l/ml)",
+        "description": (
+            "O aluno deve resolver problemas envolvendo conversão e uso de unidades "
+            "de comprimento, massa e capacidade."
+        ),
+        "text_types": ["situação-problema com medidas", "conversão de unidades"],
+        "search_queries": [],
+        "needs_image": False,
+        "notes": (
+            "Crie problemas envolvendo conversões (ex.: m → cm, kg → g, l → ml) ou "
+            "comparações entre unidades. Use contextos do cotidiano (receitas, distâncias, peso). "
+            "Apresente os dados em texto, sem imagem."
+        ),
+    },
+    "5M3": {
+        "name": "Estabelecer relações entre unidades de medida de tempo (início, intervalo e término)",
+        "description": (
+            "O aluno deve calcular horário de início, duração ou término de eventos, "
+            "convertendo entre horas e minutos quando necessário."
+        ),
+        "text_types": ["situação-problema com horários", "agenda escolar"],
+        "search_queries": [],
+        "needs_image": False,
+        "notes": (
+            "Crie situações com horário de início + duração → término (ou variações). "
+            "Ex.: 'A aula começou às 13h20 e durou 1h40min. A que horas terminou?'. "
+            "Use formato 24h ou 'da manhã/da tarde' conforme apropriado."
+        ),
+    },
+    "5M6": {
+        "name": "Estabelecer trocas entre cédulas e moedas e resolver problemas com o sistema monetário brasileiro",
+        "description": (
+            "O aluno deve trabalhar com cédulas e moedas do Real, calculando trocos, "
+            "totais de compras e equivalências entre cédulas/moedas."
+        ),
+        "text_types": ["situação-problema de compra", "troca de cédulas e moedas"],
+        "search_queries": [],
+        "needs_image": False,
+        "notes": (
+            "Use cédulas reais (R$ 2, 5, 10, 20, 50, 100) e moedas (R$ 0,05, 0,10, 0,25, 0,50, 1,00). "
+            "Crie problemas de troco, compras múltiplas ou equivalência (ex.: 'Quantas moedas de 25 centavos formam R$ 2,00?'). "
+            "Use a notação R$ corretamente."
+        ),
+    },
+    "5P1": {
+        "name": "Ler informações apresentadas em tabelas ou gráficos de colunas/barras",
+        "description": (
+            "O aluno deve interpretar dados em tabelas simples ou gráficos de colunas/barras, "
+            "identificando valores, maior/menor e fazendo comparações."
+        ),
+        "text_types": ["tabela simples", "gráfico de colunas", "gráfico de barras"],
+        "search_queries": [],
+        "needs_image": False,
+        "notes": (
+            "Represente a tabela em MARKDOWN (com | e ---) ou descreva o gráfico de colunas/barras "
+            "listando categoria → valor de forma clara (ex.: 'Segunda: 12 alunos; Terça: 18 alunos'). "
+            "Pergunte sobre leitura direta, comparação ou totais. NÃO use imagens externas."
+        ),
+    },
+    "5P3": {
+        "name": "Compreender a noção de chance e reconhecer eventos possíveis e impossíveis",
+        "description": (
+            "O aluno deve classificar eventos como possíveis, impossíveis ou certos, "
+            "e comparar a chance de ocorrência de eventos simples."
+        ),
+        "text_types": ["situação-problema de probabilidade", "sorteio simples"],
+        "search_queries": [],
+        "needs_image": False,
+        "notes": (
+            "Use contextos simples (dados, urnas com bolas coloridas, sorteios) "
+            "e peça para o aluno classificar o evento (possível, impossível, certo) "
+            "ou comparar chances (mais provável / menos provável / igualmente provável)."
+        ),
+    },
 }
