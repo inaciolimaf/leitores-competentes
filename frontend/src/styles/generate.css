@@ -1,1 +1,334 @@
-/* Styles of the generate area. */
+@layer components {
+  .generate-heading,
+  .generate-legend {
+    font-weight: 700;
+  }
+
+  .generate-heading {
+    font-family: var(--face-display);
+    font-size: var(--text-heading);
+    margin-bottom: 0.75rem;
+  }
+
+  /* Headings receive focus from code. `.book :focus-visible` would outrank `.screen-title`. */
+  .generate-form .generate-heading:focus-visible,
+  .generate-form .screen-title:focus-visible {
+    outline: none;
+  }
+
+  /* One line of the table of contents. The checkbox sits where the page number would. */
+  .toc-line {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr) 1.5rem;
+    align-items: baseline;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding-block: 0.625rem;
+    line-height: 1.4;
+    cursor: pointer;
+  }
+
+  .toc-code {
+    justify-self: start;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .toc-body {
+    display: block;
+    overflow: clip;
+  }
+
+  /* The highlighter runs over the printed words, line by line. */
+  .toc-name,
+  .toc-code,
+  .choice-label {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    padding-inline: 0.125rem;
+    margin-inline: -0.125rem;
+  }
+
+  [data-chosen="true"] > .toc-code,
+  [data-chosen="true"] .toc-name,
+  [data-chosen="true"] .choice-label {
+    background: var(--mark);
+    color: var(--on-mark);
+    animation: mark-in var(--motion-gesture) var(--ease-paper);
+  }
+
+  /* Zero wide so it never wraps: it starts after the last word and the body clips it. */
+  .toc-leader {
+    display: inline-block;
+    width: 0;
+    margin-left: 0.5rem;
+  }
+
+  .toc-leader::after {
+    content: "";
+    display: block;
+    width: 100vw;
+    border-bottom: 2px dotted var(--control);
+  }
+
+  .toc-note,
+  .choice-hint {
+    display: block;
+    font-size: var(--text-small);
+    color: var(--ink-muted);
+  }
+
+  .toc-bar {
+    display: block;
+    height: 1rem;
+    border-radius: 0.125rem;
+    background: var(--rule);
+  }
+
+  .toc-bar-box {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+
+  .toc-waiting {
+    align-items: center;
+    cursor: default;
+    animation: toc-wait 1.2s ease-in-out infinite alternate;
+  }
+
+  .paper-check,
+  .paper-radio {
+    appearance: none;
+    position: relative;
+    flex: none;
+    width: 1.375rem;
+    height: 1.375rem;
+    align-self: start;
+    border: 1.5px solid var(--control);
+    background: var(--paper);
+    color: var(--on-mark);
+    cursor: pointer;
+    scroll-margin-block: 1rem 9rem;
+  }
+
+  .paper-check {
+    border-radius: 0.125rem;
+  }
+
+  .paper-radio {
+    border-radius: 50%;
+  }
+
+  .paper-check:checked,
+  .paper-radio:checked {
+    background: var(--mark);
+  }
+
+  .paper-check:checked::after {
+    content: "";
+    position: absolute;
+    left: 0.375rem;
+    top: 0.125rem;
+    width: 0.4375rem;
+    height: 0.75rem;
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    transform: rotate(40deg);
+  }
+
+  .paper-radio:checked::after {
+    content: "";
+    position: absolute;
+    inset: 0.3125rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .toc-line:hover .paper-check,
+  .choice:hover .paper-radio {
+    border-color: var(--ink);
+  }
+
+  .generate-margin {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    scroll-margin-top: 1rem;
+  }
+
+  .generate-margin .generate-legend {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .choice {
+    display: grid;
+    grid-template-columns: 1.375rem minmax(0, 1fr);
+    gap: 0.625rem;
+    min-height: 2.75rem;
+    padding-block: 0.375rem;
+    line-height: 1.4;
+    cursor: pointer;
+  }
+
+  .quantity-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .quantity-value {
+    font-size: var(--text-heading);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .quantity-scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-small);
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .paper-range {
+    appearance: none;
+    display: block;
+    width: 100%;
+    height: 2.75rem;
+    background: transparent;
+    cursor: pointer;
+    scroll-margin-bottom: 9rem;
+  }
+
+  .paper-range::-webkit-slider-runnable-track {
+    height: 2px;
+    background: var(--control);
+  }
+
+  .paper-range::-moz-range-track {
+    height: 2px;
+    background: var(--control);
+  }
+
+  .paper-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: calc(1px - 0.75rem);
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    background: var(--mark);
+  }
+
+  .paper-range::-moz-range-thumb {
+    box-sizing: border-box;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    background: var(--mark);
+  }
+
+  /* The folio's three tracks serve the quiz pagination; this screen uses its own layout. */
+  .generate-foot {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .generate-foot .notice {
+    margin-bottom: 0;
+  }
+
+  .generate-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 1rem;
+    min-width: 0;
+    font-size: var(--text-small);
+    color: var(--ink-muted);
+  }
+
+  .generate-note [role="status"] {
+    flex-basis: 100%;
+  }
+
+  .generate-adjust {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .generate-submit {
+    width: 100%;
+  }
+
+  .generate-submit[data-busy] {
+    cursor: progress;
+  }
+
+  .generate-submit[data-busy]::before {
+    content: "";
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+    background: currentColor;
+    vertical-align: 0.1em;
+    animation: toc-wait 0.8s ease-in-out infinite alternate;
+  }
+
+  @media (min-width: 60rem) {
+    .generate-foot {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      column-gap: 1.5rem;
+    }
+
+    .generate-foot .notice {
+      grid-column: 1 / -1;
+    }
+
+    .generate-adjust {
+      display: none;
+    }
+
+    .generate-submit {
+      width: auto;
+    }
+  }
+
+  /* The list is far longer than the options: on a tall enough window they stay in view. */
+  @media (min-width: 60rem) and (min-height: 44rem) {
+    .generate-margin {
+      position: sticky;
+      top: 1.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toc-waiting,
+    .generate-submit[data-busy]::before {
+      animation: none;
+    }
+  }
+}
+
+@keyframes toc-wait {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.45;
+  }
+}
