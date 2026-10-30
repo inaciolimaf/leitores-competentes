@@ -10,9 +10,8 @@
     margin-bottom: 0.75rem;
   }
 
-  /* Headings receive focus from code. `.book :focus-visible` would outrank `.screen-title`. */
-  .generate-form .generate-heading:focus-visible,
-  .generate-form .screen-title:focus-visible {
+  /* This heading receives focus from code after a retry; it is not a control. */
+  .generate-form .generate-heading:focus-visible {
     outline: none;
   }
 

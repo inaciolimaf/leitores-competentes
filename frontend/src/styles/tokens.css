@@ -55,6 +55,7 @@
   --text-reading: 1.25rem;
   --text-heading: 1.375rem;
   --text-title: 1.75rem;
+  --text-figure: 3.9375rem;
 
   --motion-gesture: 240ms;
   --ease-paper: cubic-bezier(0.2, 0, 0, 1);

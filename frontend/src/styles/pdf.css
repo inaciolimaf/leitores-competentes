@@ -1,11 +1,5 @@
 /* The two PDF screens. They speak to the teacher, so type stays at body size. */
 @layer components {
-  /* Workaround: `.book :focus-visible` in book.css outranks the h1's `outline: none`. */
-  .proof-sheet .screen-title:focus-visible,
-  .pdf-closing .screen-title:focus-visible {
-    outline: none;
-  }
-
   .proof-tools {
     display: flex;
     justify-content: flex-end;

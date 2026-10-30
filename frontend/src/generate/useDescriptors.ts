@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { Descriptor } from "@/lib/api";
 import { fetchDescriptors } from "@/lib/api";
 
@@ -8,27 +8,11 @@ export type DescriptorsState =
   | { status: "ready"; descriptors: Descriptor[] };
 
 export function useDescriptors() {
-  const [state, setState] = useState<DescriptorsState>({ status: "loading" });
-  const [attempt, setAttempt] = useState(0);
+  const query = useQuery({ queryKey: ["descriptors"], queryFn: fetchDescriptors, staleTime: Infinity, retry: 1 });
 
-  useEffect(() => {
-    let current = true;
-    fetchDescriptors()
-      .then((descriptors) => {
-        if (current) setState({ status: "ready", descriptors });
-      })
-      .catch(() => {
-        if (current) setState({ status: "failed" });
-      });
-    return () => {
-      current = false;
-    };
-  }, [attempt]);
+  let state: DescriptorsState = { status: "loading" };
+  if (query.data) state = { status: "ready", descriptors: query.data };
+  else if (query.isError && !query.isFetching) state = { status: "failed" };
 
-  const retry = () => {
-    setState({ status: "loading" });
-    setAttempt((n) => n + 1);
-  };
-
-  return { state, retry };
+  return { state, retry: () => query.refetch() };
 }

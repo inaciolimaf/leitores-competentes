@@ -21,7 +21,7 @@
   .result-figure {
     display: block;
     font-family: var(--face-display);
-    font-size: calc(var(--text-title) * 2.25);
+    font-size: var(--text-figure);
     font-weight: 700;
     font-variant-numeric: lining-nums;
     line-height: 1.15;

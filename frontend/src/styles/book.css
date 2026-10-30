@@ -149,6 +149,11 @@
     outline-offset: 2px;
   }
 
+  /* Focus lands on the h1 from code, on every screen change; it is not a control. */
+  .book .screen-title:focus-visible {
+    outline: none;
+  }
+
   .screen-title {
     font-family: var(--face-display);
     font-size: var(--text-title);
