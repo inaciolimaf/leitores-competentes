@@ -7,10 +7,10 @@ import random
 from datetime import datetime
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
-from langchain_openai import ChatOpenAI
 from tavily import TavilyClient
 
 from app.core.config import settings
+from app.core.llm import ask_claude
 from app.core.prompts import GENERATION_PROMPT, SEARCH_PROMPT, SYSTEM_PROMPT
 from app.models.descriptors import DESCRIPTORS
 from app.models.schemas import GenerateResponse
@@ -19,15 +19,6 @@ from app.modules.media.cache import get_tavily_cache, save_tavily_cache, get_ima
 from .state import AgentState
 
 logger = logging.getLogger(__name__)
-
-def _get_llm() -> ChatOpenAI:
-    return ChatOpenAI(
-        model=settings.OPENROUTER_MODEL,
-        openai_api_base="https://openrouter.ai/api/v1",
-        openai_api_key=settings.OPENROUTER_API_KEY,
-        temperature=0.7,
-        max_tokens=16000,
-    )
 
 def plan_questions(state: AgentState) -> dict:
     descriptors = state["descriptors"]
@@ -130,8 +121,10 @@ async def search_content(state: AgentState) -> dict:
 
                             if is_rejected or is_suspicious:
                                 logger.info(f"Imagem ignorada por filtro (Visão: {is_rejected}, Suspeita: {is_suspicious}): {img_url}")
-                                image_cache[img_url] = {"url": local_url, "description": "REJECTED"}
-                                save_image_cache(image_cache)
+                                # Falha da API não diz nada sobre a imagem: não marca como rejeitada no cache
+                                if "[ERRO_VISION]" not in desc_vis:
+                                    image_cache[img_url] = {"url": local_url, "description": "REJECTED"}
+                                    save_image_cache(image_cache)
                                 try:
                                     os.remove(os.path.join(settings.BASE_DIR, local_url.lstrip("/api/")))
                                 except Exception: pass
@@ -176,7 +169,6 @@ async def search_content(state: AgentState) -> dict:
     }
 
 async def generate_questions(state: AgentState) -> dict:
-    llm = _get_llm()
     gen_msg = GENERATION_PROMPT.format(
         search_results=state["search_results"][:8000],
         quantity=state["quantity"],
@@ -185,8 +177,8 @@ async def generate_questions(state: AgentState) -> dict:
     )
     
     try:
-        response = await llm.ainvoke(state["messages"] + [HumanMessage(content=gen_msg)])
-        return {"messages": [response]}
+        text = await ask_claude(state["messages"] + [HumanMessage(content=gen_msg)], max_tokens=64000, effort="medium")
+        return {"messages": [AIMessage(content=text)]}
     except Exception as e:
         return {"error": f"Erro na geração: {e}"}
 

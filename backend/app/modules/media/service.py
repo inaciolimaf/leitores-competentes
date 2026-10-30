@@ -7,21 +7,11 @@ from PIL import Image
 
 import httpx
 from langchain_core.messages import HumanMessage
-from langchain_openai import ChatOpenAI
 
 from app.core.config import settings
+from app.core.llm import ask_claude
 
 logger = logging.getLogger(__name__)
-
-def _get_llm() -> ChatOpenAI:
-    """Create the LLM instance configured for OpenRouter."""
-    return ChatOpenAI(
-        model=settings.OPENROUTER_MODEL,
-        openai_api_base="https://openrouter.ai/api/v1",
-        openai_api_key=settings.OPENROUTER_API_KEY,
-        temperature=0.1, # Menor temperatura para maior rigor e consistência
-        max_tokens=2000,
-    )
 
 async def download_image_locally(url: str) -> str | None:
     """Download an image from the web and save it to the static folder."""
@@ -85,15 +75,16 @@ async def describe_image_vision(local_path: str) -> str:
         with open(full_path, "rb") as image_file:
             base64_image = base64.b64encode(image_file.read()).decode("utf-8")
 
-        llm = _get_llm()
-        
-        mime_type = "image/jpeg"
-        if full_path.endswith(".png"): mime_type = "image/png"
-        elif full_path.endswith(".gif"): mime_type = "image/gif"
-        elif full_path.endswith(".webp"): mime_type = "image/webp"
+        # O Claude recusa media_type diferente do arquivo real, então não confiamos na extensão
+        with Image.open(full_path) as img:
+            mime_type = Image.MIME.get(img.format, "image/jpeg")
 
         message = HumanMessage(
             content=[
+                {
+                    "type": "image",
+                    "source": {"type": "base64", "media_type": mime_type, "data": base64_image},
+                },
                 {
                     "type": "text", 
                     "text": (
@@ -118,16 +109,12 @@ async def describe_image_vision(local_path: str) -> str:
                         "- Se for OK: Descreva a cena, personagens e transcreva TODO o texto dos balões."
                     )
                 },
-                {
-                    "type": "image_url",
-                    "image_url": {"url": f"data:{mime_type};base64,{base64_image}"},
-                },
             ]
         )
         
         logger.info(f"Solicitando descrição visual rigorosa: {full_path}")
-        response = await llm.ainvoke([message])
-        description = response.content.strip()
+        response = await ask_claude([message], max_tokens=4000, effort="low")
+        description = response.strip()
         
         # Log preventivo para debugar aceites indevidos
         if "REJEITADA" not in description:

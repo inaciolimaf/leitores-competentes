@@ -11,7 +11,7 @@ primary_region = 'gru'
 
 [env]
   DATA_DIR = '/data'
-  OPENROUTER_MODEL = 'google/gemini-2.5-flash-lite'
+  ANTHROPIC_MODEL = 'claude-opus-5-5'
   USE_TAVILY_CACHE = 'true'
 
 [[mounts]]
