@@ -9,8 +9,6 @@
 @import "./styles/generate.css";
 @import "./styles/pdf.css";
 
-@custom-variant dark (&:where([data-theme="escuro"], [data-theme="escuro"] *));
-
 @layer base {
   body {
     background: var(--desk);

@@ -3,12 +3,6 @@ import { describe, expect, it } from "vitest";
 
 const css = readFileSync("src/styles/tokens.css", "utf8");
 
-function themeBlock(selector: string) {
-  const start = css.indexOf(selector);
-  const open = css.indexOf("{", start);
-  return css.slice(open, css.indexOf("}", open));
-}
-
 function readTokens(block: string) {
   const found: Record<string, [number, number, number]> = {};
   for (const m of block.matchAll(/--([\w-]+):\s*oklch\(([\d.]+) ([\d.]+) ([\d.]+)\)/g)) {
@@ -56,11 +50,8 @@ const CONTROL_PAIRS = [
   ["miss", "miss-soft"],
 ];
 
-describe.each([
-  ["claro", ':root[data-theme="claro"]'],
-  ["escuro", ':root[data-theme="escuro"]'],
-])("contrast in %s", (_name, selector) => {
-  const tokens = readTokens(themeBlock(selector));
+describe("contrast", () => {
+  const tokens = readTokens(css.slice(0, css.indexOf("}")));
 
   it.each(TEXT_PAIRS)("%s on %s reaches 4.5:1", (fg, bg) => {
     expect(contrast(tokens[fg], tokens[bg])).toBeGreaterThanOrEqual(4.5);

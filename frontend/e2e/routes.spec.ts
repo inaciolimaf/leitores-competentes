@@ -119,8 +119,8 @@ const VIEWPORTS = [
 ];
 
 const SYSTEM_THEMES = [
-  { colorScheme: "light", theme: "claro", other: "escuro", toggle: "Leitura à noite" },
-  { colorScheme: "dark", theme: "escuro", other: "claro", toggle: "Leitura de dia" },
+  { colorScheme: "light" },
+  { colorScheme: "dark" },
 ] as const;
 
 function collectConsoleErrors(page: Page) {
@@ -148,7 +148,7 @@ test("every route of the router is listed here", () => {
 });
 
 for (const viewport of VIEWPORTS) {
-  for (const { colorScheme, theme, other, toggle } of SYSTEM_THEMES) {
+  for (const { colorScheme } of SYSTEM_THEMES) {
     test.describe(`${viewport.width}x${viewport.height}, system ${colorScheme}`, () => {
       test.use({ viewport, colorScheme });
 
@@ -157,11 +157,8 @@ for (const viewport of VIEWPORTS) {
           const errors = collectConsoleErrors(page);
           await screen.open(page, api);
 
-          await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
-          await expectSoundScreen(page);
-
-          await page.getByRole("button", { name: toggle }).click();
-          await expect(page.locator("html")).toHaveAttribute("data-theme", other);
+          // The app has one theme: a system in dark mode must not change it.
+          await expect(page.locator("html")).toHaveCSS("color-scheme", "light");
           await expectSoundScreen(page);
 
           const unexpected = errors.filter((text) => !screen.expectedConsole?.test(text));

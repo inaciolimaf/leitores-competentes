@@ -3,11 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 import './styles.css'
-import { initTheme } from './lib/theme'
 import { createAppRouter } from './router'
 import { SessionProvider } from './session/SessionProvider'
-
-initTheme()
 
 const queryClient = new QueryClient()
 const router = createAppRouter()

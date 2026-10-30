@@ -1,6 +1,5 @@
-/* Raw values live here, by theme. Components use the roles exposed in styles.css. */
-:root,
-:root[data-theme="claro"] {
+/* Raw values live here. Components use the roles. */
+:root {
   color-scheme: light;
   --desk: oklch(0.925 0.016 80);
   --paper: oklch(0.977 0.012 85);
@@ -22,31 +21,6 @@
   --error-soft: oklch(0.94 0.03 25);
   --error-text: oklch(0.4 0.15 25);
   --focus: oklch(0.37 0.075 235);
-}
-
-/* Reading at night: warm lamp on sepia paper, a gold cover. Designed apart, not inverted. */
-:root[data-theme="escuro"] {
-  color-scheme: dark;
-  --desk: oklch(0.16 0.012 60);
-  --paper: oklch(0.215 0.014 65);
-  --ink: oklch(0.9 0.02 85);
-  --ink-muted: oklch(0.74 0.02 80);
-  --rule: oklch(0.34 0.015 65);
-  --control: oklch(0.62 0.02 75);
-  --primary-solid: oklch(0.82 0.09 85);
-  --on-primary: oklch(0.2 0.02 65);
-  --mark: oklch(0.4 0.07 95);
-  --on-mark: oklch(0.95 0.03 95);
-  --correct: oklch(0.76 0.11 150);
-  --correct-soft: oklch(0.29 0.04 150);
-  --correct-text: oklch(0.87 0.08 150);
-  --miss: oklch(0.76 0.1 50);
-  --miss-soft: oklch(0.3 0.04 45);
-  --miss-text: oklch(0.87 0.07 55);
-  --error: oklch(0.72 0.15 25);
-  --error-soft: oklch(0.3 0.06 25);
-  --error-text: oklch(0.87 0.08 25);
-  --focus: oklch(0.85 0.09 85);
 }
 
 :root {

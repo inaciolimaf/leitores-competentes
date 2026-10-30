@@ -47,8 +47,8 @@ Figures are tabular wherever they are compared. The body size is settled on the 
 
 ## 5. Themes
 
-Light: cream paper on a desk, in daylight. Dark: the same book read at night under a warm lamp, with
-low-glare sepia paper and a gold cover; it is not the light theme inverted.
+Light only: cream paper on a desk, in daylight. The dark theme was built and removed by the user's
+decision. This is a deliberate exception to the frontend standard, which asks for two themes.
 
 ## 6. Motion
 
@@ -84,7 +84,7 @@ This is a known exception to "reloading rebuilds the screen", accepted by the us
 | Only cheap properties animate, no `100vh` | `src/styles/motion.test.ts` |
 | One root per screen | `no-restricted-imports` + `expectOneBook()` in each screen test |
 | Colour only by token | `no-restricted-syntax` in `eslint.config.js` |
-| Accessibility and overflow, every route, both themes, 390 and 1280 px | `e2e/routes.spec.ts` with axe |
+| Accessibility and overflow, every route, 390 and 1280 px | `e2e/routes.spec.ts` with axe |
 | Keyboard, focus after navigation, reduced motion, main paths | `e2e/flows.spec.ts` |
 | Initial JS at most 250 KB gzip | `scripts/check-bundle.mjs` |
 

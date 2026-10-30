@@ -1,6 +1,4 @@
-import { useState } from "react";
 import type { ReactNode } from "react";
-import { currentTheme, setTheme } from "@/lib/theme";
 
 interface BookProps {
   section: string;
@@ -20,30 +18,12 @@ export function Book({ section, sectionDetail, children }: BookProps) {
             {section}
             {sectionDetail && ` · ${sectionDetail}`}
           </span>
-          <ThemeSwitch />
         </header>
         <main id="page-content" className="contents">
           {children}
         </main>
       </div>
     </div>
-  );
-}
-
-function ThemeSwitch() {
-  const [theme, setLocalTheme] = useState(currentTheme);
-  const next = theme === "claro" ? "escuro" : "claro";
-  return (
-    <button
-      type="button"
-      className="folio-page shrink-0 px-2"
-      onClick={() => {
-        setTheme(next);
-        setLocalTheme(next);
-      }}
-    >
-      {next === "escuro" ? "Leitura à noite" : "Leitura de dia"}
-    </button>
   );
 }
 
