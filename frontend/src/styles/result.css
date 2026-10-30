@@ -17,7 +17,6 @@
     }
   }
 
-  /* tokens.css has no figure size yet, so it derives from the title. */
   .result-figure {
     display: block;
     font-family: var(--face-display);

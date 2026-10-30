@@ -15,9 +15,11 @@ export function QuestionText({ text, className = "" }: QuestionTextProps) {
       <ReactMarkdown 
         remarkPlugins={[remarkGfm, remarkBreaks]}
         components={{
-          // Título centralizado
+          // The screen owns the h1: any heading from the model is the text's title.
+          h1: ({ children }) => <h3>{children}</h3>,
+          h2: ({ children }) => <h3>{children}</h3>,
           h3: ({ children }) => <h3>{children}</h3>,
-                    p: ({ children }) => <div className="paragraph">{children}</div>,
+          p: ({ children }) => <div className="paragraph">{children}</div>,
           strong: ({ children }) => <strong className="font-bold">{children}</strong>,
           code: ({ children }) => <span className="font-sans break-words whitespace-pre-wrap">{children}</span>,
           pre: ({ children }) => <div className="whitespace-pre-wrap mb-4 font-sans break-words bg-transparent p-0 border-0">{children}</div>,

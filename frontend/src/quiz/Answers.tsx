@@ -17,6 +17,7 @@ export function Answers({ question, chosen, onChoose }: AnswersProps) {
   const isCorrect = chosen === question.correct_answer;
   const statusRef = useRef<HTMLDivElement>(null);
   const choose = (letter: string) => {
+    if (chosen) return;
     onChoose(letter);
     requestAnimationFrame(() => statusRef.current?.scrollIntoView({ block: "nearest" }));
   };
@@ -32,13 +33,13 @@ export function Answers({ question, chosen, onChoose }: AnswersProps) {
               className="answer"
               data-state={state}
               data-chosen={alt.letter === chosen}
-              disabled={chosen !== null}
+              aria-disabled={chosen !== null}
               onClick={() => choose(alt.letter)}
             >
               <span className="answer-letter">{alt.letter}</span>
               <span>{alt.text}</span>
-              {state === "correct" && <span aria-label="resposta certa">✓</span>}
-              {state === "miss" && <span aria-label="sua resposta, não é esta">✕</span>}
+              {state === "correct" && <span role="img" aria-label="resposta certa">✓</span>}
+              {state === "miss" && <span role="img" aria-label="sua resposta, não é esta">✕</span>}
             </button>
           );
         })}

@@ -65,7 +65,7 @@ describe("QuizScreen", () => {
 
     expect(answerButton("A")).toHaveAttribute("data-chosen", "true");
     expect(screen.getByRole("status")).toHaveTextContent("Quase! A resposta é a letra B.");
-    for (const letter of ["A", "B", "C"]) expect(answerButton(letter)).toBeDisabled();
+    for (const letter of ["A", "B", "C"]) expect(answerButton(letter)).toHaveAttribute("aria-disabled", "true");
 
     await user.click(answerButton("B"));
     expect(answerButton("A")).toHaveAttribute("data-chosen", "true");

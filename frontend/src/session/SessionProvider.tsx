@@ -16,7 +16,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       pdfUrl,
       setPdfUrl,
       start: (generated: Question[]) => {
-        setQuestions(generated);
+        // Ids come from the model and may repeat; answers are keyed by them.
+        setQuestions(generated.map((q, i) => ({ ...q, id: i + 1 })));
         setAnswers({});
         setPdfUrl(null);
       },

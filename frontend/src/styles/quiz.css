@@ -57,7 +57,7 @@
     line-height: 1.35;
   }
 
-  .answer:not(:disabled):hover {
+  .answer[aria-disabled="false"]:hover {
     border-bottom-color: var(--control);
   }
 

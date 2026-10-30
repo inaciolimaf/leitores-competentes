@@ -81,8 +81,11 @@ This is a known exception to "reloading rebuilds the screen", accepted by the us
 | Rule | Guarantee |
 |---|---|
 | Text and control pairs have contrast | `src/styles/contrast.test.ts` |
-| Only cheap properties animate | `src/styles/motion.test.ts` |
-| One root per screen | `no-restricted-imports` + `expectOneBook()` |
-| Colour only by token | `no-restricted-syntax` |
-| Accessibility and overflow at 390 px | Playwright + axe, both themes |
-| Initial JS at most 250 KB gzip | check over `dist/` |
+| Only cheap properties animate, no `100vh` | `src/styles/motion.test.ts` |
+| One root per screen | `no-restricted-imports` + `expectOneBook()` in each screen test |
+| Colour only by token | `no-restricted-syntax` in `eslint.config.js` |
+| Accessibility and overflow, every route, both themes, 390 and 1280 px | `e2e/routes.spec.ts` with axe |
+| Keyboard, focus after navigation, reduced motion, main paths | `e2e/flows.spec.ts` |
+| Initial JS at most 250 KB gzip | `scripts/check-bundle.mjs` |
+
+`npm run check` and `npm run test:e2e` run them. There is no CI yet, so nothing runs them on its own.

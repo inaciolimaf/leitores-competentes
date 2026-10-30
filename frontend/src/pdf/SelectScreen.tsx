@@ -28,9 +28,10 @@ export function SelectScreen({ questions, onGenerateSuccess, onCancel }: SelectS
     setKeptIds((ids) => (ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]));
 
   const generate = async () => {
-    if (isExporting || keptIds.length === 0) return;
-    setIsExporting(true);
+    if (isExporting) return;
     setError(null);
+    if (keptIds.length === 0) return;
+    setIsExporting(true);
     try {
       const kept = questions.filter((q) => keptIds.includes(q.id));
       const { url } = await exportPdf({ title: "Simulado de Leitura", questions: kept });

@@ -1,4 +1,4 @@
-.PHONY: build up down logs restart clean env
+.PHONY: build up down logs restart clean env check-front
 
 # Cria .env a partir do exemplo se ainda não existir
 env:
@@ -58,3 +58,7 @@ dev-back:
 
 dev-front:
 	cd frontend && npm run dev
+
+# Lint, tipos, testes, build, orçamento de bundle e e2e do frontend
+check-front:
+	cd frontend && npm run check && npm run test:e2e
