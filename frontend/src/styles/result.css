@@ -1,1 +1,66 @@
 /* Styles of the result area. */
+@layer components {
+  .result-score {
+    margin-bottom: 1.25rem;
+  }
+
+  .result-score-label {
+    display: block;
+    font-family: var(--face-reading);
+    font-size: var(--text-reading);
+  }
+
+  /* On the phone the stacked pages would share the height evenly; the score keeps only its own. */
+  @media (max-width: 59.99rem) {
+    .spread:has(.result-score) {
+      grid-template-rows: auto 1fr;
+    }
+  }
+
+  /* tokens.css has no figure size yet, so it derives from the title. */
+  .result-figure {
+    display: block;
+    font-family: var(--face-display);
+    font-size: calc(var(--text-title) * 2.25);
+    font-weight: 700;
+    font-variant-numeric: lining-nums;
+    line-height: 1.15;
+  }
+
+  .result-message {
+    font-family: var(--face-reading);
+    font-size: var(--text-reading);
+    line-height: 1.5;
+  }
+
+  .result-list-title {
+    font-family: var(--face-display);
+    font-size: var(--text-heading);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-line {
+    min-height: 3.25rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 0.5rem;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--face-reading);
+    font-size: var(--text-reading);
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .result-count {
+    font-variant-numeric: lining-nums tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* The folio's last column, where the quiz keeps its forward action. */
+  .result-action {
+    grid-column: 3;
+  }
+}
