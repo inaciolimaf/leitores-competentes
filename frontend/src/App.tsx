@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { QuestionForm } from "./components/QuestionForm";
-import { QuestionCard } from "./components/QuestionCard";
 import { QuizResults } from "./components/QuizResults";
 import { SimuladoSelect } from "./components/SimuladoSelect";
+import { QuizScreen } from "./quiz/QuizScreen";
 import { Button } from "./components/ui/button";
 import type { Question, GenerateRequest } from "./lib/api";
 import { generateQuestions } from "./lib/api";
@@ -19,7 +19,6 @@ function App() {
     Record<number, { selected: string; correct: boolean; descriptor: string }>
   >({});
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const quizRef = useRef<HTMLDivElement>(null);
 
   const handleGenerate = async (params: GenerateRequest, mode: "interactive" | "simulado") => {
     setIsLoading(true);
@@ -57,20 +56,6 @@ function App() {
     }));
   };
 
-  const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex((i) => i + 1);
-    } else {
-      setView("results");
-    }
-  };
-
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex((i) => i - 1);
-    }
-  };
-
   const handleReset = () => {
     setView("form");
     setQuestions([]);
@@ -79,10 +64,18 @@ function App() {
     setError(null);
   };
 
-  // Scroll to top when question changes
-  useEffect(() => {
-    quizRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [currentIndex]);
+  if (view === "quiz" && questions.length > 0) {
+    return (
+      <QuizScreen
+        questions={questions}
+        index={currentIndex}
+        answers={answers}
+        onAnswer={handleAnswer}
+        onGoTo={setCurrentIndex}
+        onFinish={() => setView("results")}
+      />
+    );
+  }
 
   return (
     <div className="relative min-h-screen flex flex-col">
@@ -121,7 +114,7 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main ref={quizRef} className="flex-1 max-w-[900px] w-full mx-auto px-6 py-8 pb-16 relative z-10">
+      <main className="flex-1 max-w-[900px] w-full mx-auto px-6 py-8 pb-16 relative z-10">
         {/* Error */}
         {error && (
           <div className="flex items-center gap-3 p-3.5 mb-6 bg-red-500/10 border border-red-500/20 rounded-xl text-red-300 text-sm animate-fade-in-up">
@@ -140,86 +133,6 @@ function App() {
         {view === "form" && (
           <div className="animate-fade-in-up">
             <QuestionForm onSubmit={handleGenerate} isLoading={isLoading} />
-          </div>
-        )}
-
-        {/* Quiz View */}
-        {view === "quiz" && questions.length > 0 && (
-          <div className="max-w-[800px] mx-auto animate-fade-in-up">
-            {/* Progress bar */}
-            <div className="mb-7">
-              <div className="flex justify-between text-xs text-slate-500 mb-2">
-                <span className="font-medium">Progresso da Avaliação: {Object.keys(answers).length} de {questions.length}</span>
-                <span className="font-medium text-primary">{Math.round((Object.keys(answers).length / questions.length) * 100)}%</span>
-              </div>
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-[width] duration-600 ease-[cubic-bezier(0.4,0,0.2,1)]"
-                  style={{ width: `${(Object.keys(answers).length / questions.length) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Current Question */}
-            <QuestionCard
-              key={questions[currentIndex].id}
-              question={questions[currentIndex]}
-              questionNumber={currentIndex + 1}
-              totalQuestions={questions.length}
-              onAnswer={handleAnswer}
-            />
-
-            {/* Navigation Controls */}
-            <div className="flex justify-between items-center mt-7 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-              <Button 
-                variant="outline" 
-                onClick={handlePrev} 
-                disabled={currentIndex === 0}
-                className="w-28 text-slate-600 border-slate-300"
-              >
-                ← Voltar
-              </Button>
-              
-              <div className="flex justify-center gap-1.5 flex-wrap px-4">
-                {questions.map((q, i) => {
-                  const isActive = i === currentIndex;
-                  const answer = answers[q.id];
-                  let dotClasses =
-                    "w-7 h-7 rounded-full text-[0.65rem] font-semibold flex items-center justify-center transition-all duration-200 border-2 cursor-pointer";
-
-                  if (isActive) {
-                    dotClasses += " border-primary bg-primary text-white shadow-sm";
-                  } else if (answer?.correct) {
-                    dotClasses += " border-emerald-500 bg-emerald-50 text-emerald-600";
-                  } else if (answer && !answer.correct) {
-                    dotClasses += " border-red-500 bg-red-50 text-red-600";
-                  } else {
-                    dotClasses += " border-slate-200 bg-slate-50 text-slate-400";
-                  }
-
-                  return (
-                    <button
-                      key={q.id}
-                      className={dotClasses}
-                      onClick={() => {
-                        if (answers[q.id] || i === currentIndex) setCurrentIndex(i);
-                      }}
-                      disabled={!answers[q.id] && i !== currentIndex}
-                    >
-                      {i + 1}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <Button 
-                onClick={handleNext} 
-                disabled={!answers[questions[currentIndex].id]}
-                className="w-28 bg-primary hover:bg-primary/90 text-white shadow-sm"
-              >
-                {currentIndex === questions.length - 1 ? "Finalizar" : "Avançar →"}
-              </Button>
-            </div>
           </div>
         )}
 

@@ -11,15 +11,14 @@ export function QuestionText({ text, className = "" }: QuestionTextProps) {
   if (!text || !text.trim()) return null;
 
   return (
-    <div className={`text-slate-800 font-sans leading-relaxed text-[0.98rem] ${className}`}>
+    <div className={`reading-text ${className}`}>
       <ReactMarkdown 
         remarkPlugins={[remarkGfm, remarkBreaks]}
         components={{
-          // Título centralizado e sem recuo
-          h3: ({ children }) => <h3 className="font-extrabold text-slate-900 text-center text-lg mb-6 uppercase tracking-wide">{children}</h3>,
-          // Parágrafos com recuo e justificados
-          p: ({ children }) => <div className="whitespace-pre-wrap mb-4 leading-relaxed break-words indent-8 text-justify">{children}</div>,
-          strong: ({ children }) => <strong className="font-extrabold text-slate-900">{children}</strong>,
+          // Título centralizado
+          h3: ({ children }) => <h3>{children}</h3>,
+                    p: ({ children }) => <div className="paragraph">{children}</div>,
+          strong: ({ children }) => <strong className="font-bold">{children}</strong>,
           code: ({ children }) => <span className="font-sans break-words whitespace-pre-wrap">{children}</span>,
           pre: ({ children }) => <div className="whitespace-pre-wrap mb-4 font-sans break-words bg-transparent p-0 border-0">{children}</div>,
         }}

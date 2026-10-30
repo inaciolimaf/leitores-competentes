@@ -1,0 +1,136 @@
+@layer components {
+  .reading-text {
+    font-family: var(--face-reading);
+    font-size: var(--text-reading);
+    line-height: 1.6;
+  }
+
+  .reading-text h3 {
+    font-family: var(--face-display);
+    font-size: var(--text-heading);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .reading-text .paragraph {
+    margin-bottom: 1rem;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+  }
+
+  .reading-figure {
+    margin-top: 1.5rem;
+    max-width: 100%;
+    max-height: 28rem;
+    margin-inline: auto;
+    object-fit: contain;
+  }
+
+  .question-statement {
+    font-family: var(--face-reading);
+    font-size: var(--text-reading);
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 1.25rem;
+  }
+
+  .answer-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+  }
+
+  .answer {
+    width: 100%;
+    min-height: 3.25rem;
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) 1.5rem;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem 0.5rem 0.25rem;
+    border-bottom: 1px solid var(--rule);
+    border-radius: 0.25rem;
+    text-align: left;
+    font-family: var(--face-reading);
+    font-size: var(--text-reading);
+    line-height: 1.35;
+  }
+
+  .answer:not(:disabled):hover {
+    border-bottom-color: var(--control);
+  }
+
+  .answer-letter {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    border: 1.5px solid var(--control);
+    border-radius: 50%;
+    font-family: var(--face-ui);
+    font-size: var(--text-body);
+    font-weight: 700;
+  }
+
+  .answer[data-state="correct"] {
+    background: var(--correct-soft);
+    color: var(--correct-text);
+  }
+
+  .answer[data-state="correct"] .answer-letter {
+    border-color: var(--correct);
+  }
+
+  .answer[data-state="miss"] {
+    background: var(--miss-soft);
+    color: var(--miss-text);
+  }
+
+  .answer[data-state="miss"] .answer-letter {
+    border-color: var(--miss);
+  }
+
+  .answer[data-state="other"] {
+    color: var(--ink-muted);
+  }
+
+  /* The highlighter: the reader's own mark, over the chosen letter. */
+  .answer[data-chosen="true"] .answer-letter {
+    background: var(--mark);
+    color: var(--on-mark);
+    animation: mark-in var(--motion-gesture) var(--ease-paper);
+  }
+
+  .answer-note {
+    margin-top: 1.25rem;
+    scroll-margin-bottom: 6rem;
+    padding-left: 0.875rem;
+    border-left: 3px solid var(--control);
+    line-height: 1.5;
+  }
+
+  .answer-note[data-result="correct"] {
+    border-left-color: var(--correct);
+  }
+
+  .answer-note[data-result="miss"] {
+    border-left-color: var(--miss);
+  }
+
+  .answer-note strong {
+    display: block;
+    font-family: var(--face-display);
+    font-size: var(--text-heading);
+    margin-bottom: 0.25rem;
+  }
+}
+
+@keyframes mark-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

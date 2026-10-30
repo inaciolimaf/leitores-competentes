@@ -1,14 +1,21 @@
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+@import "@fontsource-variable/lora/wght.css";
+@import "@fontsource/andika/latin-400.css";
+@import "@fontsource/andika/latin-700.css";
+@import "./styles/tokens.css";
+@import "./styles/book.css";
+@import "./styles/quiz.css";
+@import "./styles/result.css";
+@import "./styles/generate.css";
+@import "./styles/pdf.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where([data-theme="escuro"], [data-theme="escuro"] *));
 
 @theme inline {
-    --font-heading: 'Outfit', var(--font-sans);
-    --font-sans: 'Geist Variable', sans-serif;
+    --font-heading: var(--face-display);
+    --font-sans: var(--face-ui);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -98,7 +105,6 @@
   }
   html {
     @apply font-sans;
-    scroll-behavior: smooth;
   }
 }
 

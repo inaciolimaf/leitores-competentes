@@ -1,0 +1,203 @@
+@layer components {
+  .book {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: var(--desk);
+    color: var(--ink);
+    font-family: var(--face-ui);
+    font-size: var(--text-body);
+    overflow-x: clip;
+  }
+
+  .book-sheet {
+    flex: 1;
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+  }
+
+  .book-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 1.25rem;
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--text-small);
+    color: var(--ink-muted);
+  }
+
+  .book-running-head {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .spread {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .page {
+    padding: 1.5rem 1.25rem 2rem;
+    min-width: 0;
+  }
+
+  .page + .page {
+    border-top: 1px solid var(--rule);
+  }
+
+  .page-in {
+    animation: page-in var(--motion-gesture) var(--ease-paper);
+  }
+
+  /* The fold: a real book has one, and it replaces the card edge. */
+  @media (min-width: 60rem) {
+    .book {
+      padding: 1.5rem;
+    }
+
+    .book-sheet {
+      border-radius: 0.25rem;
+      min-height: calc(100dvh - 3rem);
+    }
+
+    .spread-two {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .spread-two .page {
+      padding: 2.5rem 3rem;
+    }
+
+    .spread-two .page + .page {
+      border-top: 0;
+      border-left: 1px solid var(--rule);
+    }
+  }
+
+  .folio {
+    position: sticky;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    border-top: 1px solid var(--rule);
+    background: var(--paper);
+  }
+
+  .folio-pages {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.125rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .folio-page {
+    min-width: 2rem;
+    min-height: 2rem;
+    border-radius: 0.25rem;
+    color: var(--ink-muted);
+    font-size: var(--text-small);
+  }
+
+  .folio-page[aria-current="page"] {
+    color: var(--ink);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  .folio-page:disabled {
+    opacity: 0.55;
+  }
+
+  .book-action {
+    min-height: 2.75rem;
+    padding-inline: 1.25rem;
+    border-radius: 0.25rem;
+    font-weight: 700;
+  }
+
+  .book-action-solid {
+    background: var(--primary-solid);
+    color: var(--on-primary);
+  }
+
+  .book-action-quiet {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .book-action:disabled {
+    opacity: 0.45;
+  }
+
+  .book :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .screen-title {
+    font-family: var(--face-display);
+    font-size: var(--text-title);
+    font-weight: 700;
+    font-variant-numeric: lining-nums;
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+    outline: none;
+  }
+
+  .notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--error-soft);
+    color: var(--error-text);
+    border-left: 3px solid var(--error);
+    margin-bottom: 1.25rem;
+  }
+
+  .notice p {
+    flex: 1;
+    min-width: 12rem;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 10;
+    padding: 0.5rem 1rem;
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .skip-link:focus {
+    top: 0.5rem;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateX(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
